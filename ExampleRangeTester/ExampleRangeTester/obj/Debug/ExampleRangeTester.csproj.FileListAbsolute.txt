@@ -1,0 +1,15 @@
+D:\Projects\ExampleRangeTester\ExampleRangeTester\bin\Debug\ExampleRangeTester.exe.config
+D:\Projects\ExampleRangeTester\ExampleRangeTester\bin\Debug\ExampleRangeTester.exe
+D:\Projects\ExampleRangeTester\ExampleRangeTester\bin\Debug\ExampleRangeTester.pdb
+D:\Projects\ExampleRangeTester\ExampleRangeTester\obj\Debug\ExampleRangeTester.exe
+D:\Projects\ExampleRangeTester\ExampleRangeTester\obj\Debug\ExampleRangeTester.pdb
+D:\Projects\ExampleRangeTester\ExampleRangeTester\bin\Debug\lib\win32\x64\git2-a5cf255.dll
+D:\Projects\ExampleRangeTester\ExampleRangeTester\bin\Debug\lib\win32\x64\git2-a5cf255.pdb
+D:\Projects\ExampleRangeTester\ExampleRangeTester\bin\Debug\lib\win32\x86\git2-a5cf255.dll
+D:\Projects\ExampleRangeTester\ExampleRangeTester\bin\Debug\lib\win32\x86\git2-a5cf255.pdb
+D:\Projects\ExampleRangeTester\ExampleRangeTester\bin\Debug\lib\osx\libgit2-a5cf255.dylib
+D:\Projects\ExampleRangeTester\ExampleRangeTester\bin\Debug\lib\linux\x86_64\libgit2-a5cf255.so
+D:\Projects\ExampleRangeTester\ExampleRangeTester\bin\Debug\LibGit2Sharp.dll.config
+D:\Projects\ExampleRangeTester\ExampleRangeTester\bin\Debug\LibGit2Sharp.dll
+D:\Projects\ExampleRangeTester\ExampleRangeTester\bin\Debug\LibGit2Sharp.pdb
+D:\Projects\ExampleRangeTester\ExampleRangeTester\bin\Debug\LibGit2Sharp.xml
