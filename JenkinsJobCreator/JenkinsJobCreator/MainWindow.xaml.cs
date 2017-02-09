@@ -119,7 +119,7 @@ namespace JenkinsJobCreator {
         public string Post(string url, string postData) {
             WebRequest request = WebRequest.Create(url);
 
-            byte[] credentialBuffer = new UTF8Encoding().GetBytes("Admin" + ":" + "70bb48fcd606ea03c2de5381e2317ddb");
+            byte[] credentialBuffer = new UTF8Encoding().GetBytes("Admin" + ":" + "cc3367eb3685ae8c3e0f319aa319c646");
             request.Headers["Authorization"] = "Basic " + Convert.ToBase64String(credentialBuffer);
 
             request.PreAuthenticate = true;

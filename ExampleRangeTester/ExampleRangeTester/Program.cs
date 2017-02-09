@@ -15,29 +15,31 @@ using System.Threading.Tasks;
 namespace ExampleRangeTester {
     class Program {
         static int Main(string[] args) {
-            
+
             //args = new string[] { @"D:\progs\Jenkins\jobs\E5171-How-to-bind-a-dashboard-to-a-List-object\workspace", "CS_14.1.9-15.1.1" };
             Console.WriteLine("arg0: " + args[0]);
             Console.WriteLine("arg1: " + args[1]);
+            Console.WriteLine("arg2: " + args[2]);
 
             string path = string.Empty;
             string range = string.Empty;
             string language = string.Empty;
+            string commitMessage = string.Empty;
             try {
                 path = args[0];
                 language = args[0].Substring(0, 2);
                 range = args[1].Substring(3);
+                commitMessage = args[2];
             }
             catch (Exception e) {
                 Console.WriteLine("Please check if parameters are correct");
                 return 1;
             }
 
-
             Console.WriteLine("path: " + path);
             Console.WriteLine("range: " + range);
 
-            ExampleRangeTester tester = new ExampleRangeTester(path, range, language == "CS");
+            ExampleRangeTester tester = new ExampleRangeTester(path, range, commitMessage, language == "CS");
 
             if (!tester.TestExample()) {
                 Console.WriteLine("Ready: TESTING FAILED");
@@ -52,6 +54,7 @@ namespace ExampleRangeTester {
         protected List<SampleBuild> verifiedBuilds;
         protected string Builds;
         protected bool IsOriginalProjectCS;
+        protected string CommitMessage = string.Empty;
         CredentialsHandler gitCredentialsHandler;
 
         protected CredentialsHandler GitCredentialsHandler {
@@ -62,12 +65,14 @@ namespace ExampleRangeTester {
             }
         }
 
-        public ExampleRangeTester(string workingFolder, string builds, bool isOriginalProjectCS)
-            : base(new DefaultExampleTesterConfigurationEx() { LocalDXAssemblyDirectoryPath = @"D:\Projects\SpikeTester\TestWorkingFolder\DXDlls\" }, new DefaultDataRepositoryService(), new DefaultFileSystemService()) {
+        public ExampleRangeTester(string workingFolder, string builds, string commitMessage, bool isOriginalProjectCS)
+            : base(new DefaultExampleTesterConfigurationEx() { LocalDXAssemblyDirectoryPath = @"D:\ExampleTestingDXDlls\" }, new DefaultDataRepositoryService(), new DefaultFileSystemService()) {
             IsOriginalProjectCS = isOriginalProjectCS;
             ((DefaultExampleTesterConfigurationEx)BaseConfiguration).WorkingSolutionDirectoryPath = workingFolder;
             Builds = builds;
+            CommitMessage = commitMessage;
             verifiedBuilds = ParseBuilds(builds);
+
         }
 
         protected virtual CredentialsHandler CreateGitCredentialsHandler() {
@@ -75,18 +80,14 @@ namespace ExampleRangeTester {
         }
 
         public bool TestExample() {
-            string csTempDirectoryPath = FileSystemHelperEx.CreateTempFolder("$tempCSFolder");
-            FileSystemHelperEx.CopyFolderContent(BaseConfiguration.WorkingSolutionDirectoryPath, csTempDirectoryPath);
+            string csTempDirectoryPath = FileSystemHelperEx.CopyWorkingFolderIntoTemp(BaseConfiguration.WorkingSolutionDirectoryPath, "$tempCSFolder");
 
             //CS testing
+            if (!TestExampleBuilds()) {
+                EndTesting(csTempDirectoryPath);
+                return false;
+            }
 
-            //if (!TestExampleBuilds()) {
-            //    EndTesting(csTempDirectoryPath);
-            //    return false;
-            //}
-            
-            //string initialBranch = GitHelper.GetCurrentBranchName(BaseConfiguration.WorkingSolutionDirectoryPath);
-            
             //VB testing
             UpdateVBFromCS(csTempDirectoryPath);
             if (!TestExampleBuilds()) {
@@ -111,7 +112,7 @@ namespace ExampleRangeTester {
         }
 
         protected void EndTesting(string csTempDirectoryPath) {
-            FileSystemHelperEx.CopyFolderContent(BaseConfiguration.WorkingSolutionDirectoryPath, csTempDirectoryPath);
+            FileSystemHelper.SafeDeleteDirectory(csTempDirectoryPath);
             GitHelper.ForcedRevertBranchState(BaseConfiguration.WorkingSolutionDirectoryPath, "refs/remotes/origin/CS_" + Builds);
         }
 
@@ -127,32 +128,10 @@ namespace ExampleRangeTester {
             FileSystemHelper.SafeDeleteDirectory(gitWorkingFolderPath);
             Directory.Move(gitTempSCFolderPath, gitWorkingFolderPath);
 
-            GitHelper.CommitChanges(BaseConfiguration.WorkingSolutionDirectoryPath);
+            GitHelper.CommitChanges(BaseConfiguration.WorkingSolutionDirectoryPath, CommitMessage + "(VB)");
 
             GitHelper.PushToRemote(BaseConfiguration.WorkingSolutionDirectoryPath, "VB_" + Builds, GitCredentialsHandler);
         }
-
-        //protected Branch PrepareVBBranch(Repository repo) {
-        //    string vbBranchName = "VB_" + Builds;
-        //    Branch vbBranch = repo.Branches[vbBranchName];
-
-        //    if (vbBranch == null) {
-        //        vbBranch = repo.CreateBranch(vbBranchName);
-        //    }
-        //    Remote remote = repo.Network.Remotes["origin"];
-        //    repo.Branches.Update(vbBranch, b => b.Remote = remote.Name, b => b.UpstreamBranch = vbBranch.CanonicalName);
-        //    LibGit2Sharp.Commands.Checkout(repo, vbBranch);
-
-        //    LibGit2Sharp.PullOptions pullOptions = new LibGit2Sharp.PullOptions();
-        //    pullOptions.FetchOptions = new FetchOptions();
-        //    pullOptions.FetchOptions.CredentialsProvider = GitCredentialsHandler;
-
-        //    //FileSystemHelperEx.DeleteProjectFiles(BaseConfiguration.WorkingSolutionDirectoryPath);
-
-        //    LibGit2Sharp.Commands.Pull(repo, new LibGit2Sharp.Signature("Alexgoon", "mail", new DateTimeOffset(DateTime.Now)), pullOptions);
-
-        //    return vbBranch;
-        //}
 
         protected void CommitChanges(Repository repo) {
             Signature author = new Signature("Alexgoon", "alex.russkovdx@gmail.com", DateTime.Now);
@@ -343,6 +322,12 @@ namespace ExampleRangeTester {
             foreach (string newPath in Directory.GetFiles(source, "*.*", SearchOption.AllDirectories))
                 File.Copy(newPath, newPath.Replace(source, dest), true);
         }
+
+        public static string CopyWorkingFolderIntoTemp(string copyFrom, string tempFolderBaseName) {
+            string csTempDirectoryPath = FileSystemHelperEx.CreateTempFolder(tempFolderBaseName);
+            FileSystemHelperEx.CopyFolderContent(copyFrom, csTempDirectoryPath);
+            return csTempDirectoryPath;
+        }
     }
 
     public static class GitHelper {
@@ -384,13 +369,13 @@ namespace ExampleRangeTester {
             }
         }
 
-        public static void CommitChanges(string gitPath) {
+        public static void CommitChanges(string gitPath, string commitMessage) {
             using (var repo = new Repository(gitPath)) {
                 Signature author = new Signature("Alexgoon", "alex.russkovdx@gmail.com", DateTime.Now);
                 Signature committer = author;
                 try {
                     LibGit2Sharp.Commands.Stage(repo, "*");
-                    repo.Commit("VB generation" + Guid.NewGuid(), author, committer);
+                    repo.Commit(commitMessage, author, committer);
                 }
                 catch (Exception e) {
                     if (e is EmptyCommitException)

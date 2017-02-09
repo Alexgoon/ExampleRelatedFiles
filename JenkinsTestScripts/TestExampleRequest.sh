@@ -1,0 +1,1 @@
+curl -H "Content-Type: application/json" -d '{"exampleName":"How_to_hide_grid_columns"}' http://localhost:3000/testExample

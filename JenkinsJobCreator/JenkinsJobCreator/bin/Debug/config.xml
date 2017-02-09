@@ -16,7 +16,7 @@
         <name>origin</name>
         <refspec>+refs/pull/*:refs/remotes/origin/pr/*</refspec>
         <url>https://github.com/codecentral-examples/E5171-How-to-bind-a-dashboard-to-a-List-object.git</url>
-        <credentialsId>4042d136-cdd1-411a-8bfb-2edbaa6ff0a4</credentialsId>
+        <credentialsId>AlexgoonUserNameAndPassword</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
