@@ -31,3 +31,6 @@ D:\ExampleRelatedFiles\ExampleRelatedFiles\ExampleRangeTester\ExampleRangeTester
 D:\ExampleRelatedFiles\ExampleRelatedFiles\ExampleRangeTester\ExampleRangeTester\bin\Debug\LibGit2Sharp.pdb
 D:\ExampleRelatedFiles\ExampleRelatedFiles\ExampleRangeTester\ExampleRangeTester\bin\Debug\LibGit2Sharp.xml
 D:\ExampleRelatedFiles\ExampleRelatedFiles\ExampleRangeTester\ExampleRangeTester\obj\Debug\ExampleRangeTester.csprojResolveAssemblyReference.cache
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\ExampleRangeTester\ExampleRangeTester\bin\Debug\ExampleRangeTester.exe.config
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\ExampleRangeTester\ExampleRangeTester\obj\Debug\ExampleRangeTester.exe
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\ExampleRangeTester\ExampleRangeTester\obj\Debug\ExampleRangeTester.pdb
