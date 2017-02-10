@@ -1,0 +1,1 @@
+c:\users\russkov.alexander\documents\visual studio 2012\Projects\GitHubDescriptionUpdater\GitHubDescriptionUpdater\bin\Debug\GitHubDescriptionUpdater.exe.config
