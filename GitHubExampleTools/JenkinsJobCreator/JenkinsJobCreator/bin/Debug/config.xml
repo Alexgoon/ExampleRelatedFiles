@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>test</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.25.1">
+      <projectUrl>https://github.com/codecentral-examples/E5171-How-to-bind-a-dashboard-to-a-List-object/</projectUrl>
+      <displayName></displayName>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.4">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <name>origin</name>
+        <refspec>+refs/pull/*:refs/remotes/origin/pr/*</refspec>
+        <url>https://github.com/codecentral-examples/E5171-How-to-bind-a-dashboard-to-a-List-object.git</url>
+        <credentialsId>75639801-4056-416b-aa11-9051e3d0c6e2</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>${sha1}</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <org.jenkinsci.plugins.ghprb.GhprbTrigger plugin="ghprb@1.35.0">
+      <spec>H/5 * * * *</spec>
+      <latestVersion>3</latestVersion>
+      <configVersion>3</configVersion>
+      <adminlist>Alexgoon</adminlist>
+      <allowMembersOfWhitelistedOrgsAsAdmin>false</allowMembersOfWhitelistedOrgsAsAdmin>
+      <orgslist>codecentral-examples</orgslist>
+      <cron>H/5 * * * *</cron>
+      <buildDescTemplate></buildDescTemplate>
+      <onlyTriggerPhrase>false</onlyTriggerPhrase>
+      <useGitHubHooks>true</useGitHubHooks>
+      <permitAll>false</permitAll>
+      <whitelist></whitelist>
+      <autoCloseFailedPullRequests>false</autoCloseFailedPullRequests>
+      <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
+      <whiteListTargetBranches>
+        <org.jenkinsci.plugins.ghprb.GhprbBranch>
+          <branch>^.*14.1.9-15.1.1.*</branch>
+        </org.jenkinsci.plugins.ghprb.GhprbBranch>
+      </whiteListTargetBranches>
+      <blackListTargetBranches>
+        <org.jenkinsci.plugins.ghprb.GhprbBranch>
+          <branch></branch>
+        </org.jenkinsci.plugins.ghprb.GhprbBranch>
+      </blackListTargetBranches>
+      <gitHubAuthId>f879fa15-9113-4fdf-9336-21a0838c7b3a</gitHubAuthId>
+      <triggerPhrase></triggerPhrase>
+      <skipBuildPhrase>.*\[skip\W+ci\].*</skipBuildPhrase>
+      <blackListLabels></blackListLabels>
+      <whiteListLabels></whiteListLabels>
+      <extensions>
+        <org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
+          <commitStatusContext></commitStatusContext>
+          <triggeredStatus></triggeredStatus>
+          <startedStatus></startedStatus>
+          <statusUrl></statusUrl>
+          <addTestResults>false</addTestResults>
+        </org.jenkinsci.plugins.ghprb.extensions.status.GhprbSimpleStatus>
+      </extensions>
+    </org.jenkinsci.plugins.ghprb.GhprbTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <org.jenkinsci.plugins.windows__exe__runner.ExeBuilder plugin="windows-exe-runner@1.2">
+      <exeName>ExampleRangeTester</exeName>
+      <cmdLineArgs>&quot;%WORKSPACE%&quot; &quot;%GIT_BRANCH%&quot; &quot;%GHPRBPULLTITLE%&quot; &quot;%ghprbGhRepository%&quot; &quot;%ghprbPullId%&quot;</cmdLineArgs>
+      <failBuild>true</failBuild>
+    </org.jenkinsci.plugins.windows__exe__runner.ExeBuilder>
+  </builders>
+  <publishers>
+    <org.jenkinsci.plugins.github.pullrequest.publishers.impl.GitHubPRCommentPublisher plugin="github-pullrequest@0.1.0-rc18">
+      <comment>
+        <content>lkjflsdkjflsdkjf</content>
+      </comment>
+    </org.jenkinsci.plugins.github.pullrequest.publishers.impl.GitHubPRCommentPublisher>
+    <org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge plugin="ghprb@1.35.0">
+      <onlyAdminsMerge>false</onlyAdminsMerge>
+      <disallowOwnCode>false</disallowOwnCode>
+      <mergeComment>Succeeded</mergeComment>
+      <failOnNonMerge>false</failOnNonMerge>
+      <deleteOnMerge>false</deleteOnMerge>
+      <allowMergeWithoutTriggerPhrase>true</allowMergeWithoutTriggerPhrase>
+    </org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge>
+    <hudson.tasks.Mailer plugin="mailer@1.19">
+      <recipients></recipients>
+      <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>true</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
+  <buildWrappers/>
+</project>

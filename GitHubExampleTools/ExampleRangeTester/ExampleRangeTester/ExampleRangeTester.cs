@@ -17,8 +17,9 @@ namespace ExampleRangeTester {
     public class ExampleRangeTester : ExampleTool {
         protected List<SampleBuild> verifiedBuilds;
         protected string Builds;
-        protected bool IsOriginalProjectCS;
         protected string CommitMessage = string.Empty;
+        protected string RepositoryFullName;
+        protected int PullRequestNumber;
         CredentialsHandler gitCredentialsHandler;
 
         protected CredentialsHandler GitCredentialsHandler {
@@ -29,12 +30,15 @@ namespace ExampleRangeTester {
             }
         }
 
-        public ExampleRangeTester(string workingFolder, string builds, string commitMessage, bool isOriginalProjectCS)
-            : base(new DefaultExampleTesterConfigurationEx() { LocalDXAssemblyDirectoryPath = @"D:\ExampleTestingDXDlls\" }, new DefaultDataRepositoryService(), new DefaultFileSystemService()) {
-            IsOriginalProjectCS = isOriginalProjectCS;
+        public ExampleRangeTester(string workingFolder, string builds, string commitMessage, string repoFullName, int PRNumber)
+            : base(new DefaultExampleTesterConfigurationEx() { }, new DefaultDataRepositoryService(), new DefaultFileSystemService()) {
+            //: base(new DefaultExampleTesterConfigurationEx() { LocalDXAssemblyDirectoryPath = @"D:\ExampleTestingDXDlls\" }, new DefaultDataRepositoryService(), new DefaultFileSystemService()) {
+            
             ((DefaultExampleTesterConfigurationEx)BaseConfiguration).WorkingSolutionDirectoryPath = workingFolder;
             Builds = builds;
             CommitMessage = commitMessage;
+            RepositoryFullName = repoFullName;
+            PullRequestNumber = PRNumber;
             verifiedBuilds = SampleBuild.ParseBuilds(builds, GetPlatformSpecificRemoteDXDependenciesDirectoryPath());
 
         }
@@ -70,6 +74,7 @@ namespace ExampleRangeTester {
                 }
                 catch (OperationFailedException ex) {
                     Console.WriteLine("Testing result: {1}{0}{2}{0}{3}.", Environment.NewLine, ex.GetType().Name, ex.Message, ex.StackTrace);
+                    GitHubHelper.AddPullRequestComment("6664cd7bdc9932567058caa35448113838f2b91b", RepositoryFullName, PullRequestNumber, ex.Message);
                     return false;
                 }
             return true;
@@ -155,9 +160,7 @@ namespace ExampleRangeTester {
     public class SampleBuild : IComparable<SampleBuild> {
 
         public string StringValue {
-            get {
-                return ToString();
-            }
+            get { return ToString(); }
         }
         public int FirstDigit {
             get;
@@ -239,7 +242,7 @@ namespace ExampleRangeTester {
 
     public class DefaultExampleTesterConfigurationEx : DefaultExampleTesterConfiguration, IExampleToolConfiguration {
         public new string WorkingSolutionDirectoryPath { get; set; }
-        public new string LocalDXAssemblyDirectoryPath { get; set; }
-        public string GitHubUserName { get; set; }
+        //public new string LocalDXAssemblyDirectoryPath { get; set; }
+        //public string GitHubUserName { get; set; }
     }
 }

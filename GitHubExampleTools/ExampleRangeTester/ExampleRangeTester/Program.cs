@@ -16,31 +16,31 @@ using System.Threading.Tasks;
 namespace ExampleRangeTester {
     class Program {
         static int Main(string[] args) {
-
-            //args = new string[] { @"D:\progs\Jenkins\jobs\E5171-How-to-bind-a-dashboard-to-a-List-object\workspace", "CS_14.1.9-15.1.1" };
-            Console.WriteLine("arg0: " + args[0]);
-            Console.WriteLine("arg1: " + args[1]);
-            Console.WriteLine("arg2: " + args[2]);
+            //args = new string[] { @"D:\progs\Jenkins\jobs\E5171-How-to-bind-a-dashboard-to-a-List-object_14.1.9-15.1.1\workspace", "CS_14.1.9-15.1.1", "Breaking commit", "codecentral-examples/E5171-How-to-bind-a-dashboard-to-a-List-object", "29" };
 
             string path = string.Empty;
             string range = string.Empty;
-            string language = string.Empty;
+            string repoName = string.Empty;
             string commitMessage = string.Empty;
+            int PRNumber = 0;
             try {
                 path = args[0];
-                language = args[0].Substring(0, 2);
                 range = args[1].Substring(3);
                 commitMessage = args[2];
+                repoName = args[3];
+                PRNumber = int.Parse(args[4]);
             }
             catch (Exception) {
                 Console.WriteLine("Please check if parameters are correct");
                 return 1;
             }
-
-            Console.WriteLine("path: " + path);
-            Console.WriteLine("range: " + range);
-
-            ExampleRangeTester tester = new ExampleRangeTester(path, range, commitMessage, language == "CS");
+            
+            Console.WriteLine("Working folder path:" + path);
+            Console.WriteLine("Build range:" + range);
+            Console.WriteLine("Commit Message:" + commitMessage);
+            Console.WriteLine("RepoName: " + repoName);
+            Console.WriteLine("Pull Request Number: " + PRNumber);
+            ExampleRangeTester tester = new ExampleRangeTester(path, range, commitMessage, repoName, PRNumber);
 
             if (!tester.TestExample()) {
                 Console.WriteLine("Ready: TESTING FAILED");

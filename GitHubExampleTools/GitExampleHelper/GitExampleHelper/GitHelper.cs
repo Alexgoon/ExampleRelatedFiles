@@ -90,4 +90,21 @@ namespace GitExampleHelper {
             }
         }
     }
+
+    public static class GitHubHelper {
+        public static async Task<Octokit.IssueComment> AddPullRequestCommentAsync(string gitHubToken, string repoFullName, int pullRequestNumber, string message) {
+            string[] repoNameParts = repoFullName.Split('/');
+            string owner = repoNameParts[0];
+            string repoName = repoNameParts[1];
+            var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("my-cool-app"));
+            var basicAuth = new Octokit.Credentials(gitHubToken);
+            client.Credentials = basicAuth;
+            return await client.Issue.Comment.Create(owner, repoName, pullRequestNumber, message);
+        }
+
+        public static void AddPullRequestComment(string gitHubToken, string repoFullName, int pullRequestNumber, string message) {
+            var task = Task.Run(async () => { await AddPullRequestCommentAsync(gitHubToken, repoFullName, pullRequestNumber, message); });
+            task.Wait();
+        }
+    }
 }

@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 namespace ExampleRangeTester {
     public static class FileSystemHelperEx {
         public static string CreateTempFolder(string folderName) {
-            return Directory.CreateDirectory(Path.Combine(@"D:\", folderName + Guid.NewGuid().ToString())).FullName;
+            return Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString())).FullName;
+            //return Directory.CreateDirectory(Path.Combine(@"D:\", folderName + Guid.NewGuid().ToString())).FullName;
         }
 
         public static void CopyFolderContent(string source, string dest) {
