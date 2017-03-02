@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ExampleRangeTester {
     public static class FileSystemHelperEx {
-        public static string CreateTempFolder(string folderName) {
+        public static string CreateTempFolder() {
             return Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString())).FullName;
             //return Directory.CreateDirectory(Path.Combine(@"D:\", folderName + Guid.NewGuid().ToString())).FullName;
         }
@@ -19,8 +19,8 @@ namespace ExampleRangeTester {
                 File.Copy(newPath, newPath.Replace(source, dest), true);
         }
 
-        public static string CopyWorkingFolderIntoTemp(string copyFrom, string tempFolderBaseName) {
-            string csTempDirectoryPath = FileSystemHelperEx.CreateTempFolder(tempFolderBaseName);
+        public static string CopyWorkingFolderIntoTemp(string copyFrom) {
+            string csTempDirectoryPath = FileSystemHelperEx.CreateTempFolder();
             FileSystemHelperEx.CopyFolderContent(copyFrom, csTempDirectoryPath);
             return csTempDirectoryPath;
         }

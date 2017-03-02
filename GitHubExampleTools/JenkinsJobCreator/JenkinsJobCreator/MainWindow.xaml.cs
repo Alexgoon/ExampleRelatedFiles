@@ -59,12 +59,22 @@ namespace JenkinsJobCreator {
             set;
         }
 
+        GitHubClient ghClient;
+        public GitHubClient GHClient {
+            get {
+                if (ghClient == null) {
+                    ghClient = new GitHubClient(new Octokit.ProductHeaderValue("my-cool-app"));
+                    var basicAuth = new Credentials("95cf96ef7464d47c1e1c8ace83d14c86d9e31024");
+                    ghClient.Credentials = basicAuth;
+                }
+                return ghClient;
+            }
+        }
+
         public async void PopulateRepos(string organizationName) {
             IsLoading = true;
-            var client = new GitHubClient(new Octokit.ProductHeaderValue("my-cool-app"));
-            var basicAuth = new Credentials("6664cd7bdc9932567058caa35448113838f2b91b");
-            client.Credentials = basicAuth;
-            Repos = await client.Repository.GetAllForOrg(organizationName);
+
+            Repos = await GHClient.Repository.GetAllForOrg(organizationName);
             IsLoading = false;
         }
 
@@ -73,9 +83,6 @@ namespace JenkinsJobCreator {
         }
 
         public async void CreateJobs(string jenkinsHost) {
-            var client = new GitHubClient(new Octokit.ProductHeaderValue("my-cool-app"));
-            var basicAuth = new Credentials("6664cd7bdc9932567058caa35448113838f2b91b");
-            client.Credentials = basicAuth;
 
             XmlDocument doc = new XmlDocument();
             doc.Load("config.xml");
@@ -84,14 +91,19 @@ namespace JenkinsJobCreator {
             XmlNode whiteListedBranches = doc.DocumentElement.SelectSingleNode(@"/project/triggers/org.jenkinsci.plugins.ghprb.GhprbTrigger/whiteListTargetBranches/org.jenkinsci.plugins.ghprb.GhprbBranch/branch");
             ErrorLog.Clear();
             foreach (Repository rep in Repos) {
-                IReadOnlyList<Branch> branches = await client.Repository.Branch.GetAll(rep.Id);
+                IReadOnlyList<Branch> branches = await GHClient.Repository.Branch.GetAll(rep.Id);
                 foreach (Branch branch in branches) {
-                    
+
                     string[] branchParts = branch.Name.Split('_');
 
                     if (branchParts[0] == "VB")
                         continue;
-                    string pureBranchName = branchParts[1];
+                    string pureBranchName;
+                    if (branchParts.Length == 2)
+                        pureBranchName = branchParts[1];
+                    else
+                        pureBranchName = branchParts[0];
+
                     string repoUrl = string.Format(@"https://github.com/{0}/{1}", OrgName, rep.Name);
 
                     projectUrlNode.InnerText = repoUrl;
@@ -118,22 +130,18 @@ namespace JenkinsJobCreator {
         }
 
         public async void RemoveJobs(string jenkinsHost) {
-            var client = new GitHubClient(new Octokit.ProductHeaderValue("my-cool-app"));
-            var basicAuth = new Credentials("6664cd7bdc9932567058caa35448113838f2b91b");
-            //client.PullRequest.Comment.Create(
-
-            //PullRequestReviewCommentCreate prcc = new PullRequestReviewCommentCreate("",,
-            
-
-            client.Credentials = basicAuth;
             ErrorLog.Clear();
             foreach (Repository rep in Repos) {
-                IReadOnlyList<Branch> branches = await client.Repository.Branch.GetAll(rep.Id);
+                IReadOnlyList<Branch> branches = await GHClient.Repository.Branch.GetAll(rep.Id);
                 foreach (Branch branch in branches) {
                     string[] branchParts = branch.Name.Split('_');
                     if (branchParts[0] == "VB")
                         continue;
-                    string pureBranchName = branchParts[1];
+                    string pureBranchName;
+                    if (branchParts.Length == 2)
+                        pureBranchName = branchParts[1];
+                    else
+                        pureBranchName = branchParts[0];
                     string reqUrl = string.Format("{0}/job/{1}_{2}/doDelete", jenkinsHost, rep.Name, pureBranchName);
                     try {
                         Post(reqUrl, "");

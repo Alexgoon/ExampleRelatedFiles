@@ -24,21 +24,16 @@ namespace GitExampleHelper {
             }
         }
 
-        //public static void Pull(string gitPath, Branch branch, CredentialsHandler GitCredentialsHandler) {
-        //    using (var repo = new Repository(gitPath)) {
-        //        Remote remote = repo.Network.Remotes["origin"];
-        //        repo.Branches.Update(branch, b => b.Remote = remote.Name, b => b.UpstreamBranch = branch.CanonicalName);
+        public static void Pull(string gitPath, string branchName, CredentialsHandler GitCredentialsHandler) {
+            using (var repo = new Repository(gitPath)) {
 
-        //        LibGit2Sharp.PullOptions pullOptions = new LibGit2Sharp.PullOptions();
-        //        pullOptions.FetchOptions = new FetchOptions();
-        //        pullOptions.FetchOptions.CredentialsProvider = GitCredentialsHandler;
+                LibGit2Sharp.PullOptions pullOptions = new LibGit2Sharp.PullOptions();
+                pullOptions.FetchOptions = new FetchOptions();
+                pullOptions.FetchOptions.CredentialsProvider = GitCredentialsHandler;
 
-
-        //        //FileSystemHelperEx.DeleteProjectFiles(BaseConfiguration.WorkingSolutionDirectoryPath);
-
-        //        LibGit2Sharp.Commands.Pull(repo, new LibGit2Sharp.Signature("Alexgoon", "mail", new DateTimeOffset(DateTime.Now)), pullOptions);
-        //    }
-        //}
+                LibGit2Sharp.Commands.Pull(repo, new LibGit2Sharp.Signature("DevExpressExampleBot", "devexpressexamplebot@gmail.com", new DateTimeOffset(DateTime.Now)), pullOptions);
+            }
+        }
 
         public static void PushToRemote(string gitPath, string branchName, CredentialsHandler GitCredentialsHandler) {
             using (var repo = new Repository(gitPath)) {
@@ -51,7 +46,7 @@ namespace GitExampleHelper {
 
         public static void CommitChanges(string gitPath, string commitMessage) {
             using (var repo = new Repository(gitPath)) {
-                Signature author = new Signature("Alexgoon", "alex.russkovdx@gmail.com", DateTime.Now);
+                Signature author = new Signature("DevExpressExampleBot", "devexpressexamplebot@gmail.com", DateTime.Now);
                 Signature committer = author;
                 try {
                     LibGit2Sharp.Commands.Stage(repo, "*");
@@ -89,6 +84,14 @@ namespace GitExampleHelper {
                     Directory.Delete(dirFullPath, true);
             }
         }
+
+        public static Patch GetDifferencesWithLastCommit(string repoFullPath) {
+            using (var repo = new Repository(repoFullPath)) {
+                Tree commitTree = repo.Head.Tip.Tree;
+                Tree parentCommitTree = repo.Head.Tip.Parents.Single().Tree;
+                return repo.Diff.Compare<Patch>(parentCommitTree, commitTree);
+            }
+        }
     }
 
     public static class GitHubHelper {
@@ -104,6 +107,21 @@ namespace GitExampleHelper {
 
         public static void AddPullRequestComment(string gitHubToken, string repoFullName, int pullRequestNumber, string message) {
             var task = Task.Run(async () => { await AddPullRequestCommentAsync(gitHubToken, repoFullName, pullRequestNumber, message); });
+            task.Wait();
+        }
+
+        public static async Task<Octokit.PullRequestMerge> MergePullRequestAsync(string gitHubToken, string repoFullName, int pullRequestNumber) {
+            string[] repoNameParts = repoFullName.Split('/');
+            string owner = repoNameParts[0];
+            string repoName = repoNameParts[1];
+            var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("my-cool-app"));
+            var basicAuth = new Octokit.Credentials(gitHubToken);
+            client.Credentials = basicAuth;
+            return await client.PullRequest.Merge(owner, repoName, pullRequestNumber, new Octokit.MergePullRequest());
+        }
+
+        public static void MergePullRequest(string gitHubToken, string repoFullName, int pullRequestNumber) {
+            var task = Task.Run(async () => { await MergePullRequestAsync(gitHubToken, repoFullName, pullRequestNumber); });
             task.Wait();
         }
     }

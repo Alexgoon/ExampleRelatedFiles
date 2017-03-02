@@ -4,19 +4,19 @@
   <description>test</description>
   <keepDependencies>false</keepDependencies>
   <properties>
-    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.25.1">
-      <projectUrl>https://github.com/codecentral-examples/E5171-How-to-bind-a-dashboard-to-a-List-object/</projectUrl>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.26.1">
+      <projectUrl>https://github.com/codecentral-examples/TestExample/</projectUrl>
       <displayName></displayName>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
   </properties>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.4">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@3.0.5">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
         <name>origin</name>
         <refspec>+refs/pull/*:refs/remotes/origin/pr/*</refspec>
-        <url>https://github.com/codecentral-examples/E5171-How-to-bind-a-dashboard-to-a-List-object.git</url>
-        <credentialsId>75639801-4056-416b-aa11-9051e3d0c6e2</credentialsId>
+        <url>https://github.com/codecentral-examples/TestExample.git</url>
+        <credentialsId>d749e3be-422c-423f-ac6b-ad1837005d93</credentialsId>
       </hudson.plugins.git.UserRemoteConfig>
     </userRemoteConfigs>
     <branches>
@@ -37,7 +37,7 @@
       <spec>H/5 * * * *</spec>
       <latestVersion>3</latestVersion>
       <configVersion>3</configVersion>
-      <adminlist>Alexgoon</adminlist>
+      <adminlist>DevExpressExampleBot</adminlist>
       <allowMembersOfWhitelistedOrgsAsAdmin>false</allowMembersOfWhitelistedOrgsAsAdmin>
       <orgslist>codecentral-examples</orgslist>
       <cron>H/5 * * * *</cron>
@@ -50,7 +50,7 @@
       <displayBuildErrorsOnDownstreamBuilds>false</displayBuildErrorsOnDownstreamBuilds>
       <whiteListTargetBranches>
         <org.jenkinsci.plugins.ghprb.GhprbBranch>
-          <branch>^.*14.1.9-15.1.1.*</branch>
+          <branch>^.*15.1.5-15.1.7.*</branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
       </whiteListTargetBranches>
       <blackListTargetBranches>
@@ -58,7 +58,7 @@
           <branch></branch>
         </org.jenkinsci.plugins.ghprb.GhprbBranch>
       </blackListTargetBranches>
-      <gitHubAuthId>f879fa15-9113-4fdf-9336-21a0838c7b3a</gitHubAuthId>
+      <gitHubAuthId>2e52a510-bc54-4eb1-ad4d-0c44062b9ffc</gitHubAuthId>
       <triggerPhrase></triggerPhrase>
       <skipBuildPhrase>.*\[skip\W+ci\].*</skipBuildPhrase>
       <blackListLabels></blackListLabels>
@@ -83,19 +83,6 @@
     </org.jenkinsci.plugins.windows__exe__runner.ExeBuilder>
   </builders>
   <publishers>
-    <org.jenkinsci.plugins.github.pullrequest.publishers.impl.GitHubPRCommentPublisher plugin="github-pullrequest@0.1.0-rc18">
-      <comment>
-        <content>lkjflsdkjflsdkjf</content>
-      </comment>
-    </org.jenkinsci.plugins.github.pullrequest.publishers.impl.GitHubPRCommentPublisher>
-    <org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge plugin="ghprb@1.35.0">
-      <onlyAdminsMerge>false</onlyAdminsMerge>
-      <disallowOwnCode>false</disallowOwnCode>
-      <mergeComment>Succeeded</mergeComment>
-      <failOnNonMerge>false</failOnNonMerge>
-      <deleteOnMerge>false</deleteOnMerge>
-      <allowMergeWithoutTriggerPhrase>true</allowMergeWithoutTriggerPhrase>
-    </org.jenkinsci.plugins.ghprb.GhprbPullRequestMerge>
     <hudson.tasks.Mailer plugin="mailer@1.19">
       <recipients></recipients>
       <dontNotifyEveryUnstableBuild>true</dontNotifyEveryUnstableBuild>

@@ -6,6 +6,7 @@ using CodeCentral.Tools;
 using GitExampleHelper;
 using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
+using NLog.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,9 +19,17 @@ namespace ExampleRangeTester {
         protected List<SampleBuild> verifiedBuilds;
         protected string Builds;
         protected string CommitMessage = string.Empty;
+        protected string baseWorkingFolder;
         protected string RepositoryFullName;
         protected int PullRequestNumber;
+        string rootTempDirectoryPath;
+        readonly string relativeTempOriginalVB = "tempOriginalVB";
+        readonly string relativeTempTestingVB = "tempTestingVB";
+        readonly string relativeTempOriginalCS = "tempOriginalCS";
+
         CredentialsHandler gitCredentialsHandler;
+
+        protected DefaultExampleTesterConfigurationEx TesterConfig { get { return (DefaultExampleTesterConfigurationEx)BaseConfiguration; } }
 
         protected CredentialsHandler GitCredentialsHandler {
             get {
@@ -32,73 +41,128 @@ namespace ExampleRangeTester {
 
         public ExampleRangeTester(string workingFolder, string builds, string commitMessage, string repoFullName, int PRNumber)
             : base(new DefaultExampleTesterConfigurationEx() { }, new DefaultDataRepositoryService(), new DefaultFileSystemService()) {
-            //: base(new DefaultExampleTesterConfigurationEx() { LocalDXAssemblyDirectoryPath = @"D:\ExampleTestingDXDlls\" }, new DefaultDataRepositoryService(), new DefaultFileSystemService()) {
-            
-            ((DefaultExampleTesterConfigurationEx)BaseConfiguration).WorkingSolutionDirectoryPath = workingFolder;
+
+            baseWorkingFolder = workingFolder;
             Builds = builds;
             CommitMessage = commitMessage;
             RepositoryFullName = repoFullName;
             PullRequestNumber = PRNumber;
             verifiedBuilds = SampleBuild.ParseBuilds(builds, GetPlatformSpecificRemoteDXDependenciesDirectoryPath());
-
         }
 
         protected virtual CredentialsHandler CreateGitCredentialsHandler() {
-            return new CredentialsHandler((url, usernameFromUrl, types) => new UsernamePasswordCredentials() { Username = "Alexgoon", Password = "777perec777" });
+
+            return new CredentialsHandler((url, usernameFromUrl, types) => new UsernamePasswordCredentials() { Username = TesterConfig.GitUserName, Password = TesterConfig.GitUserPassword, });
         }
 
-        public bool TestExample() {
-            string csTempDirectoryPath = FileSystemHelperEx.CopyWorkingFolderIntoTemp(BaseConfiguration.WorkingSolutionDirectoryPath, "$tempCSFolder");
+        public bool ProcessExample() {
+            rootTempDirectoryPath = FileSystemHelperEx.CreateTempFolder();
+            bool result = false;
+            try {
+                result = ProcessExampleCore();
+            }
+            finally {
+                FileSystemHelper.SafeDeleteDirectory(rootTempDirectoryPath);
+            }
+            return result;
+        }
 
+        protected bool ProcessExampleCore() {
             //CS testing
-            if (!TestExampleBuilds()) {
-                EndTesting(csTempDirectoryPath);
+
+            PrepareCSForTesting();
+            if (!TestExampleBuilds(Path.Combine(baseWorkingFolder, "CS"))) {
                 return false;
             }
 
-            //VB testing
-            UpdateVBFromCS(csTempDirectoryPath);
-            if (!TestExampleBuilds()) {
-                EndTesting(csTempDirectoryPath);
+            //--VB part--
+            //RevertGitToInitialState();
+
+            PrepareVBForTesting();
+            if (!TestExampleBuilds(rootTempDirectoryPath)) {
+                //TODO: create fork, upload VB
+                //TODO: create Pull Request 
+                //TODO: comment about broken VB and add a link to PR
                 return false;
             }
-            EndTesting(csTempDirectoryPath);
+
+            //merge
+            GitHubHelper.MergePullRequest(TesterConfig.GitHubToken, RepositoryFullName, PullRequestNumber); // Ex.R0 -> Ex.R1; localGit = R0'
+
+            //solution: Pull: R0'->R1; copy V: R1->R1'; commit: R1'-> R2; push: R2->Ex.R2
+
+
+            //update main example Repo
+            GitHelper.CommitChanges(baseWorkingFolder, CommitMessage + "(VB)");
+            GitHelper.PushToRemote(baseWorkingFolder, Builds, GitCredentialsHandler);
+
             return true;
         }
 
-        protected bool TestExampleBuilds() {
+        protected void RevertGitToInitialState() {
+            GitHelper.ForcedRevertBranchState(baseWorkingFolder, "refs/remotes/origin/" + Builds);
+            GitHelper.CheckoutBranch(baseWorkingFolder, Builds);
+        }
+
+        protected bool TestExampleBuilds(string projectFolder) {
+            ((DefaultExampleTesterConfigurationEx)BaseConfiguration).WorkingSolutionDirectoryPath = projectFolder;
             foreach (SampleBuild build in verifiedBuilds)
                 try {
                     TestFileSet(build.StringValue);
-
                 }
                 catch (OperationFailedException ex) {
                     Console.WriteLine("Testing result: {1}{0}{2}{0}{3}.", Environment.NewLine, ex.GetType().Name, ex.Message, ex.StackTrace);
-                    GitHubHelper.AddPullRequestComment("6664cd7bdc9932567058caa35448113838f2b91b", RepositoryFullName, PullRequestNumber, ex.Message);
+                    GitHubHelper.AddPullRequestComment(TesterConfig.GitHubToken, RepositoryFullName, PullRequestNumber, ex.Message);
                     return false;
                 }
             return true;
         }
 
-        protected void EndTesting(string csTempDirectoryPath) {
-            FileSystemHelper.SafeDeleteDirectory(csTempDirectoryPath);
-            GitHelper.ForcedRevertBranchState(BaseConfiguration.WorkingSolutionDirectoryPath, "refs/remotes/origin/CS_" + Builds);
+        protected void PrepareVBForTesting() {
+            string sourceCSProjectPath = Path.Combine(baseWorkingFolder, "CS");
+            string absoluteTempTestingVB = Path.Combine(rootTempDirectoryPath, relativeTempTestingVB);
+
+
+            if (ShouldGenerateVB()) {
+                GenerateVB(sourceCSProjectPath, rootTempDirectoryPath);
+                FileSystemHelperEx.CopyFolderContent(rootTempDirectoryPath, absoluteTempTestingVB);
+            }
+            else {
+                //if vb exists
+                //FileSystemHelperEx.CopyFolderContent(vbResultFolder, rootTempDirectoryPath);
+            }
+
+
+            string absoluteTempOriginalVB = Path.Combine(rootTempDirectoryPath, relativeTempOriginalVB);
+            
+
+            //string vbResultFolder = Path.Combine(baseWorkingFolder, "VB");
+
+            //FileSystemHelper.SafeClearDirectory(vbResultFolder, "*");
+            //if (ShouldGenerateVB()) {
+            //    GenerateVB(sourceCSProjectPath, rootTempDirectoryPath);
+            //    FileSystemHelperEx.CopyFolderContent(rootTempDirectoryPath, vbResultFolder);
+            //}
+            //else
+            //    FileSystemHelperEx.CopyFolderContent(vbResultFolder, rootTempDirectoryPath);
         }
 
-        protected void UpdateVBFromCS(string csFolderWithInitialData) {
+        protected void PrepareCSForTesting() {
+            string sourceCSProjectPath = Path.Combine(baseWorkingFolder, "CS");
+            string absoluteTempOriginalCS = Path.Combine(rootTempDirectoryPath, relativeTempOriginalCS);
+            Directory.CreateDirectory(absoluteTempOriginalCS);
+            FileSystemHelperEx.CopyFolderContent(sourceCSProjectPath, absoluteTempOriginalCS);
+        }
 
-            FileSystemHelper.SafeClearDirectory(BaseConfiguration.WorkingSolutionDirectoryPath, "*");
-            GenerateVB(csFolderWithInitialData, BaseConfiguration.WorkingSolutionDirectoryPath);
-            GitHelper.CheckoutBranch(csFolderWithInitialData, "VB_" + Builds);
-
-            string gitWorkingFolderPath = Path.Combine(BaseConfiguration.WorkingSolutionDirectoryPath, ".git");
-            string gitTempSCFolderPath = Path.Combine(csFolderWithInitialData, ".git");
-
-            FileSystemHelper.SafeDeleteDirectory(gitWorkingFolderPath);
-            Directory.Move(gitTempSCFolderPath, gitWorkingFolderPath);
-
-            GitHelper.CommitChanges(BaseConfiguration.WorkingSolutionDirectoryPath, CommitMessage + "(VB)");
-            GitHelper.PushToRemote(BaseConfiguration.WorkingSolutionDirectoryPath, "VB_" + Builds, GitCredentialsHandler);
+        protected bool ShouldGenerateVB() {
+            if (!Directory.Exists(Path.Combine(baseWorkingFolder, "VB")))
+                return true;
+            Patch lastPatch = GitHelper.GetDifferencesWithLastCommit(baseWorkingFolder);
+            foreach (var ptc in lastPatch) {
+                if (ptc.Path.StartsWith(@"VB\"))
+                    return false;
+            }
+            return true;
         }
 
         protected void GenerateVB(string source, string destination) {
@@ -204,7 +268,7 @@ namespace ExampleRangeTester {
         }
 
         public int CompareTo(SampleBuild other) {
-            return Comparer<int>.Default.Compare(this.FirstDigit * 1000 + this.SecondDigit * 100 + this.ThirdDigit, other.FirstDigit * 1000 + other.SecondDigit * 100 + other.ThirdDigit);
+            return Comparer<int>.Default.Compare(this.FirstDigit * 10000 + this.SecondDigit * 100 + this.ThirdDigit, other.FirstDigit * 10000 + other.SecondDigit * 100 + other.ThirdDigit);
         }
 
         public static List<SampleBuild> ParseBuilds(string builds, string buildsFolder) {
@@ -242,7 +306,14 @@ namespace ExampleRangeTester {
 
     public class DefaultExampleTesterConfigurationEx : DefaultExampleTesterConfiguration, IExampleToolConfiguration {
         public new string WorkingSolutionDirectoryPath { get; set; }
-        //public new string LocalDXAssemblyDirectoryPath { get; set; }
-        //public string GitHubUserName { get; set; }
+        public string GitHubToken {
+            get { return System.Configuration.ConfigurationManager.AppSettings["GitHubToken"]; }
+        }
+        public string GitUserName {
+            get { return System.Configuration.ConfigurationManager.AppSettings["GitBotUserName"]; }
+        }
+        public string GitUserPassword {
+            get { return System.Configuration.ConfigurationManager.AppSettings["GitBotPassword"]; }
+        }
     }
 }
