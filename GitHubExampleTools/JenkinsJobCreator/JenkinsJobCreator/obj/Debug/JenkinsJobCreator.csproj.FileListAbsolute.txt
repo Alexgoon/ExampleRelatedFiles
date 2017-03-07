@@ -36,4 +36,3 @@ D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\JenkinsJobCreator\
 D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\JenkinsJobCreator\JenkinsJobCreator\obj\Debug\JenkinsJobCreator.exe.licenses
 D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\JenkinsJobCreator\JenkinsJobCreator\obj\Debug\JenkinsJobCreator.exe
 D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\JenkinsJobCreator\JenkinsJobCreator\obj\Debug\JenkinsJobCreator.pdb
-D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\JenkinsJobCreator\JenkinsJobCreator\obj\Debug\JenkinsJobCreator.csprojResolveAssemblyReference.cache

@@ -124,11 +124,9 @@ namespace JenkinsJobCreator {
             }
             MessageBox.Show("Ready");
         }
-
         public bool CanCreateJobs(string jenkinsHost) {
             return Repos != null;
         }
-
         public async void RemoveJobs(string jenkinsHost) {
             ErrorLog.Clear();
             foreach (Repository rep in Repos) {

@@ -1,0 +1,17 @@
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\lib\win32\x64\git2-a5cf255.dll
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\lib\win32\x64\git2-a5cf255.pdb
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\lib\win32\x86\git2-a5cf255.dll
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\lib\win32\x86\git2-a5cf255.pdb
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\lib\osx\libgit2-a5cf255.dylib
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\lib\linux\x86_64\libgit2-a5cf255.so
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\LibGit2Sharp.dll.config
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\GitExampleHelper.dll
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\GitExampleHelper.pdb
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\LibGit2Sharp.dll
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\Octokit.dll
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\LibGit2Sharp.pdb
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\LibGit2Sharp.xml
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\Octokit.pdb
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Release\Octokit.xml
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\obj\Release\GitExampleHelper.dll
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\obj\Release\GitExampleHelper.pdb

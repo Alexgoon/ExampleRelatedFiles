@@ -29,4 +29,3 @@ D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\G
 D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Debug\Octokit.dll
 D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Debug\Octokit.pdb
 D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\bin\Debug\Octokit.xml
-D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\GitExampleHelper\GitExampleHelper\obj\Debug\GitExampleHelper.csprojResolveAssemblyReference.cache
