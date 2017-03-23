@@ -53,6 +53,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\SimpleExampleTester\SingleBuildExampleTester.csproj">
+      <Project>{67e7ee3e-1fca-48b9-a884-fbf15d95fcdb}</Project>
+      <Name>SingleBuildExampleTester</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

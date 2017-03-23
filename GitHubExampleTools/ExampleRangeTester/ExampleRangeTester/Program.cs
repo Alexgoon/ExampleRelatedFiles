@@ -16,13 +16,10 @@ using System.Threading.Tasks;
 namespace ExampleRangeTester {
     class Program {
         static int Main(string[] args) {
-            //Working folder path:D:\progs\Jenkins\jobs\TestExample_15.1.5-15.1.7\workspace
-            //Build range:15.1.5-15.1.7
-            //Commit Message:t=5 commit
-            //RepoName: codecentral-examples/TestExample
-            //Pull Request Number: 1
 
-            //args = new string[] { @"C:\Users\russkov.alexander\Desktop\TestExample_15.1.5-15.1.7", "15.1.5-15.1.7", "Some commit", "codecentral-examples/TestExample", "36", "Alexgoon", "https://github.com/Alexgoon/TestExample.git" };
+            //args = new string[] { @"C:\Users\russkov.alexander\Desktop\New folder (15)\Project TestExample_15.1.5+", "15.1.5+", "Some commit", "codecentral-examples/TestExample", "36", "Alexgoon", "https://github.com/Alexgoon/TestExample.git" };
+
+            List<System.Text.RegularExpressions.Regex> defaultElementsToIgnore = ConfigHelper.SolutionItemsToIgnore;
 
             string path = string.Empty;
             string range = string.Empty;
@@ -32,7 +29,6 @@ namespace ExampleRangeTester {
             string pullRequestCreator = string.Empty;
             string pullRequestCreatorGit = string.Empty;
             
-
             try {
                 path = args[0];
                 range = args[1];
@@ -46,12 +42,6 @@ namespace ExampleRangeTester {
                 Console.WriteLine("Please check if parameters are correct");
                 return 1;
             }
-            
-            Console.WriteLine("Working folder path:" + path);
-            Console.WriteLine("Build range:" + range);
-            Console.WriteLine("Commit Message:" + prHeader);
-            Console.WriteLine("RepoName: " + repoName);
-            Console.WriteLine("Pull Request Number: " + PRNumber);
             ExampleRangeTester tester = new ExampleRangeTester(path, range, prHeader, repoName, PRNumber, pullRequestCreator, pullRequestCreatorGit);
 
             if (!tester.ProcessExample()) {

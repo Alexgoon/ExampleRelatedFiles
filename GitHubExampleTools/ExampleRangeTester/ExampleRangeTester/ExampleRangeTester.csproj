@@ -35,34 +35,35 @@
   <ItemGroup>
     <Reference Include="CodeCentral.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\CodeCentral.Common.dll</HintPath>
+      <HintPath>..\..\dlls\CodeCentral.Common.dll</HintPath>
     </Reference>
     <Reference Include="CodeCentral.Tester, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\CodeCentral.Tester.exe</HintPath>
+      <HintPath>..\..\dlls\CodeCentral.Tester.exe</HintPath>
     </Reference>
     <Reference Include="DevExpress.Internal.Audit.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\DevExpress.Internal.Audit.Common.dll</HintPath>
+      <HintPath>..\..\dlls\DevExpress.Internal.Audit.Common.dll</HintPath>
     </Reference>
-    <Reference Include="LibGit2Sharp">
-      <HintPath>..\packages\LibGit2Sharp.0.23.1\lib\net40\LibGit2Sharp.dll</HintPath>
+    <Reference Include="LibGit2Sharp, Version=0.23.1.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\dlls\LibGit2Sharp.dll</HintPath>
     </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\NLog.dll</HintPath>
+      <HintPath>..\..\dlls\NLog.dll</HintPath>
     </Reference>
     <Reference Include="Octokit, Version=0.24.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Octokit.0.24.0\lib\net45\Octokit.dll</HintPath>
+      <HintPath>..\..\dlls\Octokit.dll</HintPath>
     </Reference>
     <Reference Include="SupportCenter.Client.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\SupportCenter.Client.Common.dll</HintPath>
+      <HintPath>..\..\dlls\SupportCenter.Client.Common.dll</HintPath>
     </Reference>
     <Reference Include="SupportCenter.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\SupportCenter.Common.dll</HintPath>
+      <HintPath>..\..\dlls\SupportCenter.Common.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -75,8 +76,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExampleInfoController.cs" />
     <Compile Include="ExampleRangeTester.cs" />
-    <Compile Include="FileSystemHelperEx.cs" />
+    <Compile Include="Helpers\BuildsHelper.cs" />
+    <Compile Include="Helpers\TrashCleaner.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -84,12 +87,18 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\GitExampleHelper\GitExampleHelper\GitExampleHelper.csproj">
       <Project>{c7f75ff8-d60c-47ad-bd29-63431ef24d66}</Project>
       <Name>GitExampleHelper</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\SimpleExampleTester\SingleBuildExampleTester.csproj">
+      <Project>{67e7ee3e-1fca-48b9-a884-fbf15d95fcdb}</Project>
+      <Name>SingleBuildExampleTester</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,5 +1,6 @@
 ﻿using LibGit2Sharp;
 using LibGit2Sharp.Handlers;
+using SingleBuildExampleTester;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,28 +11,35 @@ using System.Threading.Tasks;
 namespace GitExampleHelper {
     public class GitHelper : IDisposable {
         Repository repository;
-        string gitPath;
-        public GitHelper(string gitPath) {
+        string GitPath;
+        string UserName;
+        string Email;
+        public GitHelper(string gitPath, string userName, string email) {
             this.repository = new Repository(gitPath);
-            this.gitPath = gitPath;
+            GitPath = gitPath;
+            UserName = userName;
+            Email = email;
         }
         public void CheckoutBranch(string branchName) {
             string canonicalName = "refs/heads/" + branchName;
             Branch branch = repository.Branches[canonicalName];
             if (branch == null) {
-                //LibGit2Sharp.Commands.Checkout(repo, repo.Branches["refs/remotes/origin/" + branchName]);
                 branch = repository.CreateBranch(branchName);
             }
             LibGit2Sharp.Commands.Checkout(repository, repository.Branches[canonicalName]);
         }
-        public void CheckoutNewBranch(string branchName) {
+        public void SetRepositoryHeadInCurrentWorkingTree(string branchName) {
             string canonicalName = "refs/heads/" + branchName;
             Branch branch = repository.Branches[canonicalName];
-            if (branch != null) {
-                repository.Branches.Remove(branch);
+            if (branch == null) {
+                branch = repository.CreateBranch(branchName);
+                LibGit2Sharp.Commands.Checkout(repository, repository.Branches[canonicalName]);
             }
-            branch = repository.CreateBranch(branchName);
-            LibGit2Sharp.Commands.Checkout(repository, repository.Branches[canonicalName]);
+            else {
+                Commit currentLatestCommit = repository.Head.Tip;
+                repository.Refs.UpdateTarget("HEAD", canonicalName);
+                repository.Reset(ResetMode.Mixed, currentLatestCommit);
+            }
         }
         public Remote CreateRemote(string name, string url) {
             Remote remote = repository.Network.Remotes[name];
@@ -55,7 +63,7 @@ namespace GitExampleHelper {
             LibGit2Sharp.PullOptions pullOptions = new LibGit2Sharp.PullOptions();
             pullOptions.FetchOptions = new FetchOptions();
             pullOptions.FetchOptions.CredentialsProvider = GitCredentialsHandler;
-            LibGit2Sharp.Commands.Pull(repository, new LibGit2Sharp.Signature("DevExpressExampleBot", "devexpressexamplebot@gmail.com", new DateTimeOffset(DateTime.Now)), pullOptions);
+            LibGit2Sharp.Commands.Pull(repository, new LibGit2Sharp.Signature(UserName, Email, new DateTimeOffset(DateTime.Now)), pullOptions);
         }
         public void PushToRemote(string branchName, CredentialsHandler GitCredentialsHandler) {
             Branch branch = repository.Branches["refs/heads/" + branchName];
@@ -63,37 +71,39 @@ namespace GitExampleHelper {
             pushOptions.CredentialsProvider = GitCredentialsHandler;
             repository.Network.Push(branch, pushOptions);
         }
-        public void CommitChanges(string commitMessage) {
-            Signature author = new Signature("DevExpressExampleBot", "devexpressexamplebot@gmail.com", DateTime.Now);
+        public void CommitChanges(string commitMessage, string exclude = null) {
+            Signature author = new Signature(UserName, Email, DateTime.Now);
             Signature committer = author;
             try {
                 LibGit2Sharp.Commands.Stage(repository, "*");
+                if (exclude != null)
+                    LibGit2Sharp.Commands.Unstage(repository, exclude);
                 repository.Commit(commitMessage, author, committer);
             }
             catch (Exception exception) {
                 if (exception is EmptyCommitException)
-                    Console.WriteLine("Nothing to commit into VB project");
+                    Console.WriteLine("Nothing to commit");
                 else
                     throw exception;
             }
         }
-        public void ForcedRevertBranchState(string branch) {
-            RemoveAllButGit();
+        public void RemoveUnstagedFiles() {
+            FileSystemHelperEx.SafeClearDirectory(GitPath, new string[] { ".git" });
             repository.Reset(ResetMode.Hard);
-            LibGit2Sharp.Commands.Checkout(repository, repository.Branches[branch]);
+            LibGit2Sharp.Commands.Checkout(repository, repository.Head.Tip);
         }
-        public string GetCurrentBranchName() {
-            return repository.Head.CanonicalName;
-        }
-        public void RemoveAllButGit() {
-            foreach (string f in Directory.GetFiles(gitPath))
-                File.Delete(f);
-            foreach (string dirFullPath in Directory.GetDirectories(gitPath)) {
-                string dirName = System.IO.Path.GetFileName(dirFullPath);
-                if (dirName != ".git")
-                    Directory.Delete(dirFullPath, true);
-            }
-        }
+        //public string GetCurrentBranchName() {
+        //    return repository.Head.CanonicalName;
+        //}
+        //public void RemoveAllButGit() {
+        //    foreach (string f in Directory.GetFiles(GitPath))
+        //        File.Delete(f);
+        //    foreach (string dirFullPath in Directory.GetDirectories(GitPath)) {
+        //        string dirName = System.IO.Path.GetFileName(dirFullPath);
+        //        if (dirName != ".git")
+        //            Directory.Delete(dirFullPath, true);
+        //    }
+        //}
         public void Dispose() {
             repository.Dispose();
         }
@@ -143,6 +153,13 @@ namespace GitExampleHelper {
         }
         public Octokit.PullRequest CreatePullRequest(string repoName, string prHeader, string prCreator, string targetRepoOwner, string branchName) {
             return RunSync<Octokit.PullRequest>(new Func<Task<Octokit.PullRequest>>(() => CreatePullRequestAsync(repoName, prHeader, prCreator, targetRepoOwner, branchName)));
+        }
+        public async Task<string> GetRepositoryDescriptionAsync(string repoOwner, string repoName) {
+            Octokit.Repository repo = await client.Repository.Get(repoOwner, repoName);
+            return repo.Description;
+        }
+        public string GetRepositoryDescription(string repoOwner, string repoName) {
+            return RunSync<string>(new Func<Task<string>>(() => GetRepositoryDescriptionAsync(repoOwner, repoName)));
         }
         Octokit.GitHubClient CreateGitHubClient(string gitHubToken) {
             var client = new Octokit.GitHubClient(new Octokit.ProductHeaderValue("code-central"));

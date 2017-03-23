@@ -1,0 +1,11 @@
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\SimpleExampleTester\bin\Debug\SingleBuildExampleTester.exe.config
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\SimpleExampleTester\bin\Debug\SingleBuildExampleTester.exe
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\SimpleExampleTester\bin\Debug\SingleBuildExampleTester.pdb
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\SimpleExampleTester\obj\Debug\SingleBuildExampleTester.exe
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\SimpleExampleTester\obj\Debug\SingleBuildExampleTester.pdb
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\SimpleExampleTester\bin\Debug\CodeCentral.Common.dll
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\SimpleExampleTester\bin\Debug\CodeCentral.Tester.exe
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\SimpleExampleTester\bin\Debug\DevExpress.Internal.Audit.Common.dll
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\SimpleExampleTester\bin\Debug\SupportCenter.Client.Common.dll
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\SimpleExampleTester\bin\Debug\SupportCenter.Common.dll
+D:\ExampleRelatedFiles\ExampleRelatedFiles\GitHubExampleTools\SimpleExampleTester\obj\Debug\SingleBuildExampleTester.csprojResolveAssemblyReference.cache

@@ -8,7 +8,7 @@
         xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" 
         x:Class="JenkinsJobCreator.MainWindow"
         Title="MainWindow" Height="600" Width="810"
-        DataContext="{dxmvvm:ViewModelSource Type=local:ViewModel}">
+        DataContext="{dxmvvm:ViewModelSource Type=local:MainViewModel}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
